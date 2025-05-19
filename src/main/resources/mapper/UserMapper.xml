@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.nbmly.springbook.mapper.UserMapper">
+    <select id="findUserByLoginName" parameterType="String" resultMap="findUserMap">
+        select u.*,r.* from user u, role r,user_role ur
+        where u.user_id=ur.user_id and ur.role_id=r.role_id and login_name=#{value}
+    </select>
+    <select id="findUserByUserId" parameterType="Integer" resultMap="findUserMap">
+        select u.*,r.* from user u, role r,user_role ur
+        where u.user_id=ur.user_id and ur.role_id=r.role_id and u.user_id=#{value};
+    </select>
+    <select id="findUsers" resultMap="findUserMap">
+        select u.*,r.* from user u, role r,user_role ur
+        where u.user_id=ur.user_id and ur.role_id=r.role_id
+    </select>
+    <resultMap id="findUserMap" type="User">
+        <id property="userId" column="user_id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+        <result property="mobile" column="mobile"/>
+        <collection property="roleList" ofType="Role">
+            <id property="roleId" column="role_id"/>
+            <result property="roleName" column="role_name"/>
+        </collection>
+    </resultMap>
+    <insert id="addUser" parameterType="User" keyProperty="userId" useGeneratedKeys="true">
+        insert into user(login_name,password,user_name,mobile)
+            values(#{loginName}, #{password},#{userName},#{mobile});
+    </insert>
+    <delete id="deleteUserByUserId" parameterType="Integer">
+        delete from user where user_id=#{value};
+    </delete>
+    <update id="updateUser" parameterType="User">
+        update user set login_name=#{loginName},user_name=#{userName},
+            mobile=#{mobile} where user_id=#{userId};
+    </update>
+    <update id="updatePassword" parameterType="User">
+        update user set password=#{password} where login_name=#{loginName};
+    </update>
+    <update id="resetPassword" parameterType="Integer">
+        update user set password='888888' where user_id=#{value};
+    </update>
+    <select id="findUserIdByLoginName" parameterType="String" resultType="int">
+        select user_id from user where login_name=#{value}
+    </select>
+</mapper>

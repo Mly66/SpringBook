@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.nbmly.springbook.mapper.BookMapper">
+    <select id="findBookByBookId" parameterType="int" resultMap="findBooksMap">
+        select b.*,c.course_name,p.pub_name from book b, course c, publisher p where b.course_id=c.course_id and b.pub_id=p.pub_id and book_id=#{bookId};
+    </select>
+    <select id="findBooks" resultMap="findBooksMap">
+        select b.*,c.course_name,p.pub_name from book b, course c, publisher p where b.course_id=c.course_id and b.pub_id=p.pub_id
+    </select>
+    <select id="getBookList" resultMap="findBooksMap">
+        select b.*,c.course_name,p.pub_name from book b, course c, publisher p 
+        where b.course_id=c.course_id and b.pub_id=p.pub_id
+    </select>
+    <resultMap id="findBooksMap" type="book">
+        <id column="book_id" property="bookId"/>
+        <result column="book_name" property="bookName"/>
+        <result column="isbn" property="isbn"/>
+        <result column="price" property="price"/>
+        <result column="pub_date" property="pubDate"/>
+        <result column="warehousing_date" property="warehousingDate"/>
+        <result column="author" property="author"/>
+        <result column="inventory" property="inventory"/>
+        <result column="course_name" property="course.courseName"/>
+        <result column="pub_name" property="publisher.pubName"/>
+    </resultMap>
+    <update id="editBook" parameterType="book">
+        update book set book_name=#{bookName},isbn=#{isbn},price=#{price},pub_date=#{pubDate},
+            author=#{author},pub_id=#{publisher.pubId},course_id=#{course.courseId},inventory=#{inventory}
+        where book_id=#{bookId};
+    </update>
+    <insert id="addBook" parameterType="book">
+        insert into book(book_name,isbn,price,pub_date,author,warehousing_date,pub_id,course_id,inventory)
+            values(#{bookName},#{isbn},#{price},#{pubDate},#{author},NOW(),#{publisher.pubId},#{course.courseId},#{inventory});
+    </insert>
+    <delete id="deleteBook" parameterType="int">
+        delete from book where book_id=#{bookId};
+    </delete>
+<!--    <select id="findApplysByUserId" parameterType="int" resultMap="findBooksMap">
+        select b.*, ab.apply_count,ab.apply_status from book b,apply_book ab
+        where b.book_id=ab.book_id and ab.user_id=#{value}
+    </select>
+    <select id="findApplys" resultMap="findBooksMap">
+        select b.*, ab.apply_count,ab.apply_status from book b,apply_book ab
+        where b.book_id=ab.book_id
+    </select>
+    <resultMap id="findBooksMap" type="book">
+        <id column="book_id" property="bookId"/>
+        <result column="book_name" property="bookName"/>
+        <result column="isbn" property="isbn"/>
+        <result column="price" property="price"/>
+        <result column="author" property="author"/>
+        <result column="apply_count" property="applyBook.applyCount"/>
+        <result column="apply_status" property="applyBook.applyStatus"/>
+    </resultMap>-->
+    <select id="findBookCountByCourseId" parameterType="int" resultType="int">
+        select count(*) from book where course_id=#{courseId};
+    </select>
+    <select id="findBookCountByPubId" parameterType="int" resultType="int">
+        select count(*) from book where pub_id=#{pubId};
+    </select>
+</mapper>

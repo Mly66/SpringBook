@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="distribute_history">
+    <div class='row-fluid' id='content-wrapper'>
+        <div class='span12'>
+            <div class='page-header'>
+                <h1 class='pull-left'> <i class='icon-dashboard'></i> <span>教材发放历史</span> </h1>
+            </div>
+        </div>
+        <div class='span12 box bordered-box green-border' style='margin-left:0;'>
+            <div class='box-header sea-blue-background'>
+                <div class='title'>发放信息列表</div>
+            </div>
+            <div class='box-content box-no-padding'>
+                <div class='responsive-table'>
+                    <div class='scrollable-area'>
+                        <table class='table table-bordered table-hover table-striped' style='margin-left:0;'>
+                            <thead>
+                            <tr><th>教材名称</th><th>签领人</th><th>发放数量</th><th>发放日期</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="distributeBook:${pageInfo.list}">
+                                <td th:text="${distributeBook.book.bookName}"></td>
+                                <td th:text="${distributeBook.user.userName}"></td>
+                                <td th:text="${distributeBook.distributeCount}"></td>
+                                <td th:text="${distributeBook.distributeDate}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/to_home_page(homePage=10,page=1)}">首页</a>
+            <a th:href="@{/to_home_page(homePage=10,page=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+            <a th:href="@{/to_home_page(homePage=10,page=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+            <a th:href="@{/to_home_page(homePage=10,page=${pageInfo.pages})}">尾页</a>
+            当前 <span th:text="${pageInfo.pageNum}"></span> 页,总<span th:text="${pageInfo.pages}"></span> 页,共<span th:text="${pageInfo.total}"></span> 条记录<br/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

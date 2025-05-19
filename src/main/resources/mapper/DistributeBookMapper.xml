@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.nbmly.springbook.mapper.DistributeBookMapper">
+    <insert id="addDistributeBook" parameterType="distributeBook">
+        insert into distribute_book(book_id,user_id,distribute_date,distribute_count)
+            values(#{book.bookId},#{user.userId},#{distributeDate},#{distributeCount});
+    </insert>
+    
+    <!-- 新增：更新已存在的发放记录 -->
+    <update id="updateDistributeBook" parameterType="distributeBook">
+        update distribute_book
+        set distribute_count = distribute_count + #{distributeCount},
+            distribute_date = #{distributeDate}
+        where book_id = #{book.bookId} and user_id = #{user.userId}
+    </update>
+    
+    <!-- 新增：检查发放记录是否存在 -->
+    <select id="findDistributeBookByBookIdAndUserId" resultType="distributeBook">
+        select * from distribute_book
+        where book_id = #{bookId} and user_id = #{userId}
+    </select>
+    
+    <select id="findDistributeBooks" resultMap="findDistributeBooksMap">
+        select db.*,b.book_name,u.user_name
+        from distribute_book db,book b,user u
+        where db.book_id=b.book_id and db.user_id=u.user_id
+    </select>
+    <resultMap id="findDistributeBooksMap" type="distributeBook">
+        <id property="book.bookId" column="book_id"/>
+        <id property="user.userId" column="user_id"/>
+        <result column="distribute_date" property="distributeDate"/>
+        <result column="distribute_count" property="distributeCount"/>
+        <result column="book_name" property="book.bookName"/>
+        <result column="user_name" property="user.userName"/>
+    </resultMap>
+</mapper>

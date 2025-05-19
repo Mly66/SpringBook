@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.nbmly.springbook.mapper.ApplyBookMapper">
+    <!-- 新增：根据图书ID查询未审批的申请记录 -->
+    <select id="findNoApprovedApplyBooksByBookId" resultMap="applyBookMap">
+        select ab.*,b.book_name,b.isbn,b.price,u.user_name 
+        from apply_book ab,book b,user u
+        where ab.book_id=b.book_id and ab.user_id=u.user_id 
+        and ab.book_id=#{bookId} and ab.apply_status=0
+    </select>
+</mapper> 

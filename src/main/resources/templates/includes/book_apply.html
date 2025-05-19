@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="book_apply">
+    <div class='row-fluid' id='content-wrapper'>
+        <div class='span12'>
+            <div class='page-header'>
+                <h1 class='pull-left'> <i class='icon-dashboard'></i> <span>教材申请</span> </h1>
+            </div>
+        </div>
+        <div class='span12 box bordered-box green-border' style='margin-left:0px;'>
+            <div class='box-header sea-blue-background'>
+                <div class='title'>教材信息列表</div>
+            </div>
+            <div class='box-content box-no-padding'>
+                <div class='responsive-table'>
+                    <div class='scrollable-area'>
+                        <table class='table table-bordered table-hover table-striped' style='margin-bottom:0;'>
+                            <thead>
+                            <tr><th>教材名称</th><th>isbn</th><th>价格</th><th>出版日期</th><th>作者</th><th>出版社</th><th>课程名</th><th>操作</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:id="${book.bookId}" th:each="book:${pageInfo.list}">
+                                <td th:text="${book.bookName}"></td>
+                                <td th:text="${book.isbn}"></td>
+                                <td th:text="${book.price}"></td>
+                                <td th:text="${book.pubDate}"></td>
+                                <td th:text="${book.author}"></td>
+                                <td th:text="${book.publisher.pubName}"></td>
+                                <td th:text="${book.course.courseName}"></td>
+                                <td width="150">
+                                    <div class='text-center'>
+                                        <a class='btn btn-success btn-mini' href='#' th:onclick="editBook([[${book.bookId}]]);">编辑</a>
+                                        <a class='btn btn-danger btn-mini' href='#' th:onclick="deleteBook([[${book.bookId}]]);">删除</a>
+                                        <a class='btn btn-success btn-mini' href='#' th:onclick="applyBook([[${book.bookId}]]);">申请</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/to_home_page(homePage=6,page=1)}">首页</a>
+            <a th:href="@{/to_home_page(homePage=6,page=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+            <a th:href="@{/to_home_page(homePage=6,page=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+            <a th:href="@{/to_home_page(homePage=6,page=${pageInfo.pages})}">尾页</a>
+            当前 <span th:text="${pageInfo.pageNum}"></span> 页,总<span th:text="${pageInfo.pages}"></span> 页,共<span th:text="${pageInfo.total}"></span> 条记录<br/>
+            <a class='btn btn-success btn-small' data-toggle='modal' href='#modal-add-book' role='button' onclick='addBook();'>添加</a>
+        </div>
+    </div>
+    <div class='modal hide fade' id='modal-add-book' role='dialog' tabindex='-1'>
+        <div class='modal-header'>
+            <button class='close' data-dismiss='modal' type='button'>&times;</button>
+            <h3 id="title_text">添加教材</h3>
+        </div>
+        <form method="post" th:action="@{/book/save_book}" class='form' style='margin-bottom: 0;' />
+        <div class='modal-body'>
+            <input id="book-id" type="hidden" name="bookId" value="0">
+            <div class='control-group'>
+                <label class='control-label'>教材名称</label>
+                <div class='controls'>
+                    <input class='span5' id='book-name' name="bookName" placeholder='教材名称' type='text'/>
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>isbn</label>
+                <div class='controls'>
+                    <input class='span5' id='isbn' name="isbn" placeholder='isbn' type='text' />
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>价格</label>
+                <div class='controls'>
+                    <input class='span5' id='price' name="price" placeholder='价格' type='text' />
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>出版日期</label>
+                <div class='controls'>
+                    <input class='span5' id='pub-date' name="pubDate" placeholder='出版日期' type='date' />
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>作者</label>
+                <div class='controls'>
+                    <input class='span5' id='author' name="author" placeholder='作者' type='text' />
+                </div>
+            </div>
+            <div id="lbl-pub-id" class='control-group'>
+                <label class='control-label'>出版社</label>
+                <select id="pub-id" name="publisher.pubId">
+                    <span th:each="publisher:${publishers}"><option th:value="${publisher.pubId}" th:text="${publisher.pubName}"></option></span>
+                </select>
+            </div>
+            <div id="lbl-course-id" class='control-group'>
+                <label class='control-label'>课程</label>
+                <select id="course-id" name="course.courseId">
+                    <span th:each="course:${courses}"><option th:value="${course.courseId}" th:text="${course.courseName}"></option></span>
+                </select>
+            </div>
+        </div>
+        <div class='modal-footer'>
+            <button class='btn' data-dismiss='modal'>关闭</button>
+            <button class='btn btn-primary' type="submit">保存</button>
+        </div>
+        </form>
+    </div>
+    <div class='modal hide fade' id='modal-add-apply' role='dialog' tabindex='-1'>
+        <div class='modal-header'>
+            <button class='close' data-dismiss='modal' type='button'>&times;</button>
+            <h3 id="applyy_title_text">添加教材申请</h3>
+        </div>
+        <form class='form' method="post" action="/book/add_apply" style='margin-bottom: 0;' />
+        <div class='modal-body'>
+            <input id="apply-book-id" type="hidden" name="book.bookId" value="0">
+            <div class='control-group'>
+                <label class='control-label'>申请数量</label>
+                <div class='controls'>
+                    <input class='span5' id='apply-count' name="applyCount" placeholder='申请数量' type='text'/>
+                </div>
+            </div>
+        </div>
+        <div class='modal-footer'>
+            <button class='btn' data-dismiss='modal'>关闭</button>
+            <button class='btn btn-primary'>保存</button><!-- type="submit"-->
+        </div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        function deleteBook(bookId) {
+            if (!confirm("确定要删除吗？"))
+                return;
+            $.post("/book/delete_book",{"bookId":bookId},
+                function(data){
+                    if(data == "SUCCESS"){
+                        $("#" + bookId).remove();
+                    }else{
+                        alert("删除教材失败！");
+                    }
+                });
+        }
+        function addBook(bookId) {
+            $("#title_text").text("添加教材");
+            $("#book-id").attr("value", "0");
+            $("#book-name").attr("value","");
+            $("#isbn").attr("value","");
+            $("#price").attr("value","");
+            $("#pub-date").attr("value","");
+            $("#author").attr("value","");
+            return true;
+        }
+        function editBook(bookId) {
+            $.post("/book/to_edit_book",{"bookId":bookId},
+                function(data){
+                    if(data != null){
+                        $("#title_text").text("编辑教材");
+                        $("#book-name").attr("value",data.bookName);
+                        $("#isbn").attr("value",data.isbn);
+                        $("#price").attr("value",data.price);
+                        $("#pub-date").attr("value",data.pubDate);
+                        $("#author").attr("value",data.author);
+                        $("#pub-id").attr("value",data.publisher.pubId);
+                        $("#course-id").attr("value",data.course.courseId);
+                        $("#book-id").attr("value", bookId);
+
+                        $("#modal-add-book").modal();
+                    }
+                });
+        }
+        function applyBook(bookId) {
+            $("#apply-book-id").attr("value",bookId);
+            $("#modal-add-apply").modal();
+        }
+    </script>
+</div>
+</body>
+</html>

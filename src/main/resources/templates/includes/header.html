@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="header">
+    <header>
+        <div class='navbar'>
+            <div class='navbar-inner'>
+                <div class='container-fluid'>
+                    <a class='brand' th:href="@{http://localhost:8080}">
+                        <i class='icon-heart-empty'></i>
+                        <span class='hidden-phone'>简易教材发放系统</span>
+                    </a>
+                    <a class='toggle-nav btn pull-left' href='#'>
+                        <i class='icon-reorder'></i>
+                    </a>
+                    <ul class='nav pull-right'>
+                        <li class='brand'>欢迎 [<span th:text="${session.loginName}"></span>] 用户</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>
+</body>
+</html>

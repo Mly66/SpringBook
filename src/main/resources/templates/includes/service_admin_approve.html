@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="service_admin_approve">
+    <div class='row-fluid' id='content-wrapper'>
+        <div class='span12'>
+            <div class='page-header'>
+                <h1 class='pull-left'> <i class='icon-dashboard'></i> <span>审批申请</span> </h1>
+            </div>
+        </div>
+        <div class='span12 box bordered-box green-border' style='margin-left:0;'>
+            <div class='box-header sea-blue-background'>
+                <div class='title'>待审批申请</div>
+            </div>
+            <div class='box-content box-no-padding'>
+                <div class='responsive-table'>
+                    <div class='scrollable-area'>
+                        <table class='table table-bordered table-hover table-striped' style='margin-left:0;'>
+                            <thead>
+                            <tr><th>教材名称</th><th>isbn</th><th>价格</th><th>申请人</th><th>申请日期</th><th>数量</th><th>处理状态</th><th>操作</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:id="${applyBook.applyBookId}" th:each="applyBook:${pageInfo.list}">
+                                <td th:text="${applyBook.book.bookName}"></td>
+                                <td th:text="${applyBook.book.isbn}"></td>
+                                <td th:text="${applyBook.book.price}"></td>
+                                <td th:text="${applyBook.user.userName}"></td>
+                                <td th:text="${applyBook.applyDate}"></td>
+                                <td th:text="${applyBook.applyCount}"></td>
+                                <td th:text="${applyBook.applyStatusText}"></td>
+                                <td>
+                                    <div class='text-center'><a class='btn btn-success btn-mini' href='#' th:onclick="approveApply([[${applyBook.applyBookId}]]);">审批</a></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/to_home_page(homePage=3,page=1)}">首页</a>
+            <a th:href="@{/to_home_page(homePage=3,page=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+            <a th:href="@{/to_home_page(homePage=3,page=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+            <a th:href="@{/to_home_page(homePage=3,page=${pageInfo.pages})}">尾页</a>
+            当前 <span th:text="${pageInfo.pageNum}"></span> 页,总<span th:text="${pageInfo.pages}"></span> 页,共<span th:text="${pageInfo.total}"></span> 条记录<br/>
+        </div>
+    </div>
+    <div class='modal hide fade' id='modal-approve-apply-book' role='dialog' tabindex='-1'>
+        <div class='modal-header'>
+            <button class='close' data-dismiss='modal' type='button'>&times;</button>
+            <h3 id="title_text">审批意见</h3>
+        </div>
+        <form method="post" th:action="@{/apply/approve_apply}" class='form' style='margin-bottom: 0;' />
+        <div class='modal-body'>
+            <input id="apply-book-id" type="hidden" name="applyBookId" value="0">
+            <div class='control-group'>
+                <div class='controls'>
+                    <p>
+                        <label><input type="radio" name="applyStatus" value="1" id="applyStatus_0">同意</label><br>
+                        <label><input type="radio" name="applyStatus" value="2" id="applyStatus_1">不同意</label>
+                        <br>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class='modal-footer'>
+            <button class='btn' data-dismiss='modal'>关闭</button>
+            <button class='btn btn-primary' type="submit">保存</button>
+        </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+        function approveApply(applyBookId) {
+            $("#apply-book-id").attr("value",applyBookId)
+            $("#modal-approve-apply-book").modal();
+        }
+    </script>
+</div>
+</body>
+</html>

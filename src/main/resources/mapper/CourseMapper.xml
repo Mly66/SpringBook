@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.nbmly.springbook.mapper.CourseMapper">
+    <select id="findCourseByCourseId" parameterType="int" resultType="course">
+        select * from course where course_id=#{courseId};
+    </select>
+    <select id="findCourses" resultType="course">
+        select * from course
+    </select>
+    <insert id="addCourse" parameterType="course">
+        insert into course(course_name,period,credit) values(#{courseName},#{period},#{credit});
+    </insert>
+    <update id="editCourse" parameterType="course">
+        update course set course_name=#{courseName},period=#{period},credit=#{credit} where course_id=#{courseId};
+    </update>
+    <delete id="deleteCourse" parameterType="int">
+        delete from course where course_id=#{courseId};
+    </delete>
+</mapper>

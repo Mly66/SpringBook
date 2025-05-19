@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="service_admin_course">
+    <div class='row-fluid' id='content-wrapper'>
+        <div class='span12'>
+            <div class='page-header'>
+                <h1 class='pull-left'> <i class='icon-dashboard'></i> <span>课程管理</span> </h1>
+            </div>
+        </div>
+        <div class='span12 box bordered-box green-border' style='margin-left:0px;'>
+            <div class='box-header sea-blue-background'>
+                <div class='title'>课程信息列表</div>
+            </div>
+            <div class='box-content box-no-padding'>
+                <div class='responsive-table'>
+                    <div class='scrollable-area'>
+                        <table class='table table-bordered table-hover table-striped' style='margin-bottom:0;'>
+                            <thead>
+                            <tr><th>课程名</th><th>学时</th><th>学分</th><th>操作</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:id="${course.courseId}" th:each="course:${pageInfo.list}">
+                                <td th:text="${course.courseName}"></td>
+                                <td th:text="${course.period}"></td>
+                                <td th:text="${course.credit}"></td>
+                                <td width="150">
+                                    <div class='text-center'>
+                                        <a class='btn btn-success btn-mini' href='#' th:onclick="editCourse([[${course.courseId}]]);">编辑</a>
+                                        <a class='btn btn-danger btn-mini' href='#' th:onclick="deleteCourse([[${course.courseId}]]);">删除</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/to_home_page(homePage=2,page=1)}">首页</a>
+            <a th:href="@{/to_home_page(homePage=2,page=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+            <a th:href="@{/to_home_page(homePage=2,page=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+            <a th:href="@{/to_home_page(homePage=2,page=${pageInfo.pages})}">尾页</a>
+            当前 <span th:text="${pageInfo.pageNum}"></span> 页,总<span th:text="${pageInfo.pages}"></span> 页,共<span th:text="${pageInfo.total}"></span> 条记录<br/>
+            <a class='btn btn-success btn-small' data-toggle='modal' href='#modal-add-course' role='button' onclick='addCourse();'>添加</a>
+        </div>
+    </div>
+    <div class='modal hide fade' id='modal-add-course' role='dialog' tabindex='-1'>
+        <div class='modal-header'>
+            <button class='close' data-dismiss='modal' type='button'>&times;</button>
+            <h3 id="title_text">添加课程</h3>
+        </div>
+        <form method="post" th:action="@{/course/save_course}" class='form' style='margin-bottom: 0;' />
+        <div class='modal-body'>
+            <input id="course-id" type="hidden" name="courseId" value="0">
+            <div class='control-group'>
+                <label class='control-label'>课程名称</label>
+                <div class='controls'>
+                    <input class='span5' id='course-name' name="courseName" placeholder='课程名称' type='text'/>
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>学时</label>
+                <div class='controls'>
+                    <input class='span5' id='period' name="period" placeholder='学时' type='text' />
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>学分</label>
+                <div class='controls'>
+                    <input class='span5' id='credit' name="credit" placeholder='学分' type='text' />
+                </div>
+            </div>
+        </div>
+        <div class='modal-footer'>
+            <button class='btn' data-dismiss='modal'>关闭</button>
+            <button class='btn btn-primary' type="submit">保存</button>
+        </div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        function deleteCourse(courseId) {
+            if (!confirm("确定要删除吗？"))
+                return;
+            $.post("/course/delete_course",{"courseId":courseId},
+                function(data){
+                    if(data == "SUCCESS"){
+                        $("#" + courseId).remove();
+                    }else{
+                        alert("删除课程失败！");
+                    }
+                });
+        }
+        function addCourse(courseId) {
+            $("#title_text").text("添加课程");
+            $("#course-id").attr("value", "0");
+            $("#course-name").attr("value","");
+            $("#period").attr("value","");
+            $("#credit").attr("value","");
+            return true;
+        }
+        function editCourse(courseId) {
+            $.post("/course/to_edit_course",{"courseId":courseId},
+                function(data){
+                    if(data != null){
+                        $("#title_text").text("编辑课程");
+                        $("#course-name").attr("value",data.courseName);
+                        $("#period").attr("value",data.period);
+                        $("#credit").attr("value",data.credit);
+                        $("#course-id").attr("value", courseId);
+
+                        $("#modal-add-course").modal();
+                    }
+                    else
+                        alert("课程信息与其他信息存在关联，不能删除");
+                });
+        }
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="sys_admin_user">
+    <div class='row-fluid' id='content-wrapper'>
+        <div class='span12'>
+            <div class='page-header'>
+                <h1 class='pull-left'> <i class='icon-dashboard'></i> <span>用户管理</span> </h1>
+            </div>
+        </div>
+        <div class='span12 box bordered-box green-border' style='margin-left:0px;'>
+            <div class='box-header sea-blue-background'>
+                <div class='title'>用户信息列表</div>
+            </div>
+            <div class='box-content box-no-padding'>
+                <div class='responsive-table'>
+                    <div class='scrollable-area'>
+                        <table class='table table-bordered table-hover table-striped' style='margin-bottom:0;'>
+                            <thead>
+                            <tr><th>登录名</th><th>用户名</th><th>电话</th><th>角色</th><th>操作</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr id="${user.userId}" th:each="user:${pageInfo.list}">
+                                <td th:text="${user.loginName}"></td>
+                                <td th:text="${user.userName}"></td>
+                                <td th:text="${user.mobile}"></td>
+                                <td><span th:each="role:${user.roleList}"><span th:text="${role.roleName}"></span>&nbsp;</span> </td>
+                                <td width="150">
+                                    <div class='text-center'>
+                                        <a class='btn btn-success btn-mini' href='#' th:onclick="editUser([[${user.userId}]]);">编辑</a>
+                                        <a class='btn btn-danger btn-mini' href='#' th:onclick="deleteUser([[${user.userId}]]);">删除</a>
+                                        <a class='btn btn-warning btn-mini' href='#' th:onclick="resetPassword([[${user.userId}]]);">重置密码</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/to_home_page(homePage=1,page=1)}">首页</a>
+            <a th:href="@{/to_home_page(homePage=1,page=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+            <a th:href="@{/to_home_page(homePage=1,page=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+            <a th:href="@{/to_home_page(homePage=1,page=${pageInfo.pages})}">尾页</a>
+            当前 <span th:text="${pageInfo.pageNum}"></span> 页,总<span th:text="${pageInfo.pages}"></span> 页,共<span th:text="${pageInfo.total}"></span> 条记录<br/>
+            <a class='btn btn-success btn-small' data-toggle='modal' href='#modal-add-user' role='button' onclick='addUser();'>添加</a>
+        </div>
+    </div>
+    <div class='modal hide fade' id='modal-add-user' role='dialog' tabindex='-1'>
+        <div class='modal-header'>
+            <button class='close' data-dismiss='modal' type='button'>&times;</button>
+            <h3 id="title_text">添加用户</h3>
+        </div>
+        <form method="post" th:action="@{/user/save_user}" class='form' style='margin-bottom: 0;' />
+        <div class='modal-body'>
+            <input id="user-id" type="hidden" name="userId" value="0">
+            <div class='control-group'>
+                <label class='control-label'>登录名</label>
+                <div class='controls'>
+                    <input class='span5' id='login-name' name="loginName" placeholder='登录名' type='text'/>
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>用户名</label>
+                <div class='controls'>
+                    <input class='span5' id='user-name' name="userName" placeholder='用户名' type='text' />
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>电话</label>
+                <div class='controls'>
+                    <input class='span5' id='mobile' name="mobile" placeholder='电话' type='text' />
+                </div>
+            </div>
+            <div id="lbl-role-id" class='control-group'>
+                <label class='control-label'>角色</label>
+                <div class="controls">
+                    <input type="checkbox" id="sys-admin" name="roleIds" value="1">系统管理员<br/>
+                    <input type="checkbox" id="service-admin" name="roleIds" value="2">业务管理员<br/>
+                    <input type="checkbox" id="teacher" name="roleIds" value="3">教师<br/>
+                </div>
+            </div>
+        </div>
+        <div class='modal-footer'>
+            <button class='btn' data-dismiss='modal'>关闭</button>
+            <button class='btn btn-primary' type="submit">保存</button>
+        </div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        function deleteUser(userId) {
+            if (!confirm("确定要删除吗？"))
+                return;
+            $.post("/user/delete_user",{"userId":userId},
+                function(data){
+                    if(data == "SUCCESS"){
+                        $("#" + userId).remove();
+                    }else{
+                        alert("删除用户失败！");
+                    }
+                });
+        }
+        function addUser(userId) {
+            $("#title_text").text("添加用户");
+            $("#user-id").attr("value", "0");
+            $("#login-name").attr("value","");
+            $("#user-name").attr("value","");
+            $("#mobile").attr("value","");
+            $("#lbl-role-id").hide();
+            return true;
+        }
+        function editUser(userId) {
+            $.post("/user/to_edit_user",{"userId":userId},
+                function(data){
+                    if(data != null){
+                        $("#title_text").text("编辑用户");
+                        $("#login-name").attr("value",data.loginName);
+                        $("#user-name").attr("value",data.userName);
+                        $("#mobile").attr("value",data.mobile);
+                        $("#user-id").attr("value", userId);
+
+                        $("#lbl-role-id").show();
+                        $("#sys-admin").attr("checked", false);
+                        $("#service-admin").attr("checked", false);
+                        $("#teacher").attr("checked", false);
+                        $("#student").attr("checked", false);
+                        for (var i = 0; i < data.roleList.length; i ++){
+                            if (data.roleList[i].roleId == 1)
+                                $("#sys-admin").prop("checked", true);
+                            else if (data.roleList[i].roleId == 2)
+                                $("#service-admin").prop("checked", true);
+                            else if (data.roleList[i].roleId == 3)
+                                $("#teacher").prop("checked", true);
+                            else
+                                $("#student").prop("checked", true);
+                        }
+
+                        $("#role-id").attr("value", data.roleId);
+                        $("#modal-add-user").modal();
+                    }
+                });
+        }
+        function resetPassword(userId) {
+            $.post("/user/reset_password",{"userId":userId},
+                function(data){
+                    if(data == "SUCCESS"){
+                        alert("密码重置成功！");
+                    }
+                    else
+                        alert("密码重置失败！");
+                });
+        }
+    </script>
+</div>
+</body>
+</html>

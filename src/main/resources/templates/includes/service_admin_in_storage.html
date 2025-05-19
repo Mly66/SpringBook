@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="service_admin_in_storage">
+    <div class='row-fluid' id='content-wrapper'>
+        <div class='span12'>
+            <div class='page-header'>
+                <h1 class='pull-left'> <i class='icon-dashboard'></i> <span>教材入库</span> </h1>
+            </div>
+        </div>
+        <div class='span12 box bordered-box green-border' style='margin-left:0;'>
+            <div class='box-header sea-blue-background'>
+                <div class='title'>已审批申请</div>
+            </div>
+            <div class='box-content box-no-padding'>
+                <div class='responsive-table'>
+                    <div class='scrollable-area'>
+                        <table class='table table-bordered table-hover table-striped' style='margin-left:0;'>
+                            <thead>
+                            <tr><th>教材名称</th><th>isbn</th><th>价格</th><th>申请人</th><th>申请日期</th><th>数量</th><th>处理状态</th><th>操作</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:id="${applyBook.applyBookId}" th:each="applyBook:${pageInfo.list}">
+                                <td th:text="${applyBook.book.bookName}"></td>
+                                <td th:text="${applyBook.book.isbn}"></td>
+                                <td th:text="${applyBook.book.price}"></td>
+                                <td th:text="${applyBook.user.userName}"></td>
+                                <td th:text="${applyBook.applyDate}"></td>
+                                <td th:text="${applyBook.applyCount}"></td>
+                                <td th:text="${applyBook.applyStatusText}"></td>
+                                <td>
+                                    <div class='text-center'><a class='btn btn-success btn-mini' href='#' th:onclick="inStorageApply([[${applyBook.applyBookId}]]);">入库</a></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/to_home_page(homePage=4,page=1)}">首页</a>
+            <a th:href="@{/to_home_page(homePage=4,page=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+            <a th:href="@{/to_home_page(homePage=4,page=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+            <a th:href="@{/to_home_page(homePage=4,page=${pageInfo.pages})}">尾页</a>
+            当前 <span th:text="${pageInfo.pageNum}"></span> 页,总<span th:text="${pageInfo.pages}"></span> 页,共<span th:text="${pageInfo.total}"></span> 条记录<br/>
+        </div>
+    </div>
+      <script type="text/javascript">
+        function inStorageApply(applyBookId) {
+            var res = confirm("确定要入库码？");
+            if (res != true)
+                return;
+            $.post("/apply/in_storage_book",{"applyBookId":applyBookId},
+                function(data){
+                    if(data == "SUCCESS"){
+                        alert("入库成功！");
+                        window.location = "/to_home_page?page=1&homePage=4";
+                    }else{
+                        alert("删除教材失败！");
+                    }
+                });
+        }
+    </script>
+</div>
+
+</body>
+</html>

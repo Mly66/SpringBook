@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>简易教材发放系统</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap/bootstrap.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery_ui/jquery-ui-1.10.0.custom.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap/bootstrap-responsive.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery_ui/jquery.ui.1.10.0.ie.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/slidernav.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/light-theme.css}" />
+</head>
+<body class='contrast-sea-blue'>
+<!--head横幅-->
+<div id="header" th:include="includes/header::header"></div>
+<div id='wrapper'>
+    <!--left菜单-->
+    <div id="left_menu" th:include="includes/left_menu::left_menu"></div>
+    <!--right面板-->
+    <section id='content'>
+        <div class='container-fluid'>
+            <div th:if="${session.homePage}==1">
+                <div id="sys_admin_user" th:include="/includes/sys_admin_user::sys_admin_user"></div></div>
+            <div th:if="${session.homePage}==2">
+                <div id="service_admin_course" th:include="/includes/service_admin_course::service_admin_course"></div></div>
+            <div th:if="${session.homePage}==3">
+                <div id="service_admin_approve" th:include="/includes/service_admin_approve::service_admin_approve"></div></div>
+            <div th:if="${session.homePage}==4">
+                <div id="service_admin_in_storage" th:include="/includes/service_admin_in_storage::service_admin_in_storage"></div></div>
+            <div th:if="${session.homePage}==5">
+                <div id="service_admin_book_distribution" th:include="/includes/service_admin_book_distribution::service_admin_book_distribution"></div></div>
+            <div th:if="${session.homePage}==6">
+                <div id="book_apply" th:include="/includes/book_apply::book_apply"></div></div>
+            <div th:if="${session.homePage}==7">
+                <div id="apply_query" th:include="/includes/apply_query::apply_query"></div></div>
+            <div th:if="${session.homePage}==8">
+                <div id="publisher_list" th:include="/includes/publisher_list::publisher_list"></div></div>
+            <div th:if="${session.homePage}==9">
+                <div id="common_update_password" th:include="/includes/common_update_password::common_update_password"></div></div>
+            <div th:if="${session.homePage}==10">
+                <div id="distribute_history" th:include="/includes/distribute_history::distribute_history"></div></div>
+        </div>
+    </section>
+</div>
+<script th:src="@{/js/jquery/jquery.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/jquery.mobile-events.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/nav.js}" type="text/javascript"></script>
+<script th:src="@{/js/bootstrap.min.js}" type="text/javascript"></script>
+</body>
+</html>

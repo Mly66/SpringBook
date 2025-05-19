@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="left_menu">
+    <nav class='' id='main-nav'>
+        <div class='navigation'>
+            <ul class='nav nav-stacked'><!--${session.homePage}==1 and ${session.roleId}==1-->
+                <li th:if="${session.roleId}==1" class=''> <a th:href="@{/to_home_page(page=1,homePage=1)}"> <i class='icon-dashboard'></i> <span>用户管理</span> </a> </li>
+
+                <li th:if="${session.roleId}==2" class=''> <a th:href="@{/to_home_page(page=1,homePage=2)}"> <i class='icon-dashboard'></i> <span>课程管理</span> </a> </li>
+                <li th:if="${session.roleId}==2" class=''> <a th:href="@{/to_home_page(page=1,homePage=3)}"> <i class='icon-dashboard'></i> <span>审批管理</span> </a> </li>
+                <li th:if="${session.roleId}==2" class=''> <a th:href="@{/to_home_page(page=1,homePage=4)}"> <i class='icon-dashboard'></i> <span>入库管理</span> </a> </li>
+                <li th:if="${session.roleId}==2" class=''> <a th:href="@{/to_home_page(page=1,homePage=5)}"> <i class='icon-dashboard'></i> <span>教材发放</span> </a> </li>
+                <li th:if="${session.roleId}==2" class=''> <a th:href="@{/to_home_page(page=1,homePage=10)}"> <i class='icon-dashboard'></i> <span>发放历史</span> </a> </li>
+
+                <li th:if="${session.roleId}==3" class=''> <a th:href="@{/to_home_page(page=1,homePage=8)}"> <i class='icon-dashboard'></i> <span>出版社管理</span> </a> </li>
+                <li th:if="${session.roleId}==3" class=''> <a th:href="@{/to_home_page(page=1,homePage=6)}"> <i class='icon-dashboard'></i> <span>教材申请</span> </a> </li>
+                <li th:if="${session.roleId}==3" class=''> <a th:href="@{/to_home_page(page=1,homePage=7)}"> <i class='icon-dashboard'></i> <span>申请查询</span> </a> </li>
+
+                <li class=''> <a th:href="@{/to_home_page(page=1,homePage=9)}"> <i class='icon-star'></i> <span>修改密码</span> </a> </li>
+                <li class=''> <a th:href="@{/to_logout}"> <i class='icon-table'></i> <span>注销</span> </a> </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+</body>
+</html>

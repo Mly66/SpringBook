@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>include page</title>
+</head>
+<body>
+<div th:fragment="publisher_list">
+    <div class='row-fluid' id='content-wrapper'>
+        <div class='span12'>
+            <div class='page-header'>
+                <h1 class='pull-left'> <i class='icon-dashboard'></i> <span>出版社管理</span> </h1>
+            </div>
+        </div>
+        <div class='span12 box bordered-box green-border' style='margin-left:0px;'>
+            <div class='box-header sea-blue-background'>
+                <div class='title'>出版社信息列表</div>
+            </div>
+            <div class='box-content box-no-padding'>
+                <div class='responsive-table'>
+                    <div class='scrollable-area'>
+                        <table class='table table-bordered table-hover table-striped' style='margin-bottom:0;'>
+                            <thead>
+                            <tr><th>出版社名称</th><th>联系人</th><th>电话</th><th>操作</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:id="${publisher.pubId}" th:each="publisher:${pageInfo.list}">
+                                <td th:text="${publisher.pubName}"></td>
+                                <td th:text="${publisher.contacter}"></td>
+                                <td th:text="${publisher.mobile}"></td>
+                                <td width="150">
+                                    <div class='text-center'>
+                                        <a class='btn btn-success btn-mini' href='#' th:onclick="editPublisher([[${publisher.pubId}]]);">编辑</a>
+                                        <a class='btn btn-danger btn-mini' href='#' th:onclick="deletePublisher([[${publisher.pubId}]]);">删除</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/to_home_page(homePage=8,page=1)}">首页</a>
+            <a th:href="@{/to_home_page(homePage=8,page=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
+            <a th:href="@{/to_home_page(homePage=8,page=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
+            <a th:href="@{/to_home_page(homePage=8,page=${pageInfo.pages})}">尾页</a>
+            当前 <span th:text="${pageInfo.pageNum}"></span> 页,总<span th:text="${pageInfo.pages}"></span> 页,共<span th:text="${pageInfo.total}"></span> 条记录<br/>
+            <a class='btn btn-success btn-small' data-toggle='modal' href='#modal-add-publisher' role='button' onclick='addPublisher();'>添加</a>
+        </div>
+    </div>
+    <div class='modal hide fade' id='modal-add-publisher' role='dialog' tabindex='-1'>
+        <div class='modal-header'>
+            <button class='close' data-dismiss='modal' type='button'>&times;</button>
+            <h3 id="title_text">添加出版社</h3>
+        </div>
+        <form method="post" th:action="@{/publisher/save_publisher}" class='form' style='margin-bottom: 0;' />
+        <div class='modal-body'>
+            <input id="pub-id" type="hidden" name="pubId" value="0">
+            <div class='control-group'>
+                <label class='control-label'>出版社名称</label>
+                <div class='controls'>
+                    <input class='span5' id='pub-name' name="pubName" placeholder='出版社名称' type='text'/>
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>联系人</label>
+                <div class='controls'>
+                    <input class='span5' id='contacter' name="contacter" placeholder='联系人' type='text' />
+                </div>
+            </div>
+            <div class='control-group'>
+                <label class='control-label'>电话</label>
+                <div class='controls'>
+                    <input class='span5' id='mobile' name="mobile" placeholder='电话' type='text' />
+                </div>
+            </div>
+        </div>
+        <div class='modal-footer'>
+            <button class='btn' data-dismiss='modal'>关闭</button>
+            <button class='btn btn-primary' type="submit">保存</button>
+        </div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+        function deletePublisher(pubId) {
+            if (!confirm("确定要删除吗？"))
+                return;
+            $.post("/publisher/delete_publisher",{"pubId":pubId},
+                function(data){
+                    if(data == "SUCCESS"){
+                        $("#" + pubId).remove();
+                    }else{
+                        alert("删除出版社失败！");
+                    }
+                });
+        }
+        function addPublisher(pubId) {
+            $("#title_text").text("添加出版社");
+            $("#pub-id").attr("value", "0");
+            $("#pub-name").attr("value","");
+            $("#contacter").attr("value","");
+            $("#mobile").attr("value","");
+            return true;
+        }
+        function editPublisher(pubId) {
+            $.post("/publisher/to_edit_publisher",{"pubId":pubId},
+                function(data){
+                    if(data != null){
+                        $("#title_text").text("编辑出版社");
+                        $("#pub-name").attr("value",data.pubName);
+                        $("#contacter").attr("value",data.contacter);
+                        $("#mobile").attr("value",data.mobile);
+                        $("#pub-id").attr("value", pubId);
+
+                        $("#modal-add-publisher").modal();
+                    }
+                });
+        }
+    </script>
+</div>
+</body>
+</html>

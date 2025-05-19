@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.nbmly.springbook.mapper.PublisherMapper">
+    <select id="findPublisherByPubId" parameterType="int" resultType="publisher">
+        select * from publisher where pub_id=#{pubId};
+    </select>
+    <select id="findPublishers" resultType="publisher">
+        select * from publisher
+    </select>
+    <insert id="addPublisher" parameterType="publisher">
+        insert into publisher(pub_name,contacter,mobile) values(#{pubName},#{contacter},#{mobile});
+    </insert>
+    <update id="editPublisher" parameterType="publisher">
+        update publisher set pub_name=#{pubName},contacter=#{contacter},mobile=#{mobile} where pub_id=#{pubId};
+    </update>
+    <delete id="deletePublisher" parameterType="int">
+        delete from publisher where pub_id=#{pubId};
+    </delete>
+</mapper>

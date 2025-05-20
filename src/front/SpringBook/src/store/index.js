@@ -1,21 +1,37 @@
-import { createStore } from 'vuex';
+import { defineStore } from 'pinia';
 
-const store = createStore({
-  state: {
-    add: 0,
-    reduce: 100
-  },
-  mutations: {
-    increase(state) {
-      state.add++;
+export const useMainStore = defineStore('main', {
+  state: () => ({
+    token: localStorage.getItem('token') || '',
+    isAuthenticated: !!localStorage.getItem('token'),
+    userInfo: JSON.parse(localStorage.getItem('userInfo') || '{}')
+  }),
+  actions: {
+    setToken(data) {
+      this.token = data;
+      this.isAuthenticated = true;
+      this.userInfo = data;
+      localStorage.setItem('token', data);
+      localStorage.setItem('userInfo', JSON.stringify(data));
     },
-    decrease(state) {
-      state.reduce--;
+    clearAuth() {
+      this.token = '';
+      this.isAuthenticated = false;
+      this.userInfo = {};
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
     }
   },
-  actions: {},
-  getters: {},
-  modules: {}
+  getters: {
+    userRole: (state) => state.userInfo.roleId
+  },
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'main',
+        storage: localStorage,
+      },
+    ],
+  }
 });
-
-export default store;

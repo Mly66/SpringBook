@@ -1,5 +1,15 @@
 import request from '../axios/request'; 
 
+// 用户登录
+export const login = (data) => {
+  return request.post('/user/login', data);
+};
+
+// 用户注册
+export const register = (data) => {
+  return request.post('/user/register', data);
+};
+
 // 获取用户分页数据
 export const fetchUsers = (page, userName, userSex) => {
   const postData = new URLSearchParams({
@@ -52,6 +62,7 @@ export const fetchUserById = (userId) => {
     withCredentials: true,
   });
 };
+
 // 更新用户信息
 export const updateUserById = (user) => {
   return request.post('/user/updateUserById', user, {
@@ -60,34 +71,7 @@ export const updateUserById = (user) => {
   });
 };
 
-
 // 获取所有用户
 export const findAll = () => {
   return request.post('/user/findAll', {}, { withCredentials: true });
-};
-
-// 验证密码
-export const tryPassword = (admin) => {
-  return request.post('/admin/tryPassword', admin, { withCredentials: true });
-};
-
-// 添加管理员
-export const insertAdmin = (admin) => {
-  return request.post('/admin/insertAdmin', admin, { withCredentials: true });
-};
-
-// 根据管理员账号获取管理员信息
-export const fetchAdminById = (account) => {
-  return request.get(`/admin/fetchAdminById`, {
-    params: { account }, 
-    withCredentials: true,
-  });
-};
-
-// 更新用户信息
-export const updateAdminById = (admin) => {
-  return request.post('/admin/updateAdminById', admin, {
-    headers: { 'Content-Type': 'application/json' },
-    withCredentials: true
-  });
-};
+}; 
